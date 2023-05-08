@@ -14,6 +14,9 @@ type Prey struct {
 }
 
 func (s *Shark) Hunt(p *Prey) error {
+	if p == nil {
+		return fmt.Errorf("prey must not be nil")
+	}
 	if s.tired {
 		return fmt.Errorf("cannot hunt, i am really tired")
 	}
