@@ -43,8 +43,8 @@ func NewMockStorage(speed float64, x float64, y float64, tunaSpeed float64) stor
 
 type catchSimulatorMock struct {
 	// max time to catch the prey in seconds
-	maxTimeToCatch float64
-	GLDSpy         bool
+	maxTimeToCatch       float64
+	GetLinearDistanceSpy bool
 }
 
 func (r *catchSimulatorMock) CanCatch(distance float64, speed float64, catchSpeed float64) bool {
@@ -53,7 +53,7 @@ func (r *catchSimulatorMock) CanCatch(distance float64, speed float64, catchSpee
 }
 
 func (r *catchSimulatorMock) GetLinearDistance(position [2]float64) float64 {
-	r.GLDSpy = true
+	r.GetLinearDistanceSpy = true
 	x := big.NewFloat(position[0])
 	y := big.NewFloat(position[1])
 	z := x.Add(x.Mul(x, x), y.Mul(y, y))
@@ -63,8 +63,8 @@ func (r *catchSimulatorMock) GetLinearDistance(position [2]float64) float64 {
 
 func NewCatchSimulatorMock(maxTimeToCatch float64) catchSimulatorMock {
 	return catchSimulatorMock{
-		maxTimeToCatch: maxTimeToCatch,
-		GLDSpy:         false,
+		maxTimeToCatch:       maxTimeToCatch,
+		GetLinearDistanceSpy: false,
 	}
 }
 
@@ -79,7 +79,7 @@ func TestSharkHuntsSuccessfully(t *testing.T) {
 	err := shark.Hunt(tuna)
 	//Assert
 	assert.NoError(t, err)
-	assert.Equal(t, true, cs.GLDSpy)
+	assert.Equal(t, true, cs.GetLinearDistanceSpy)
 }
 
 func TestSharkCannotCatchSpeed(t *testing.T) {
@@ -94,7 +94,7 @@ func TestSharkCannotCatchSpeed(t *testing.T) {
 	err := shark.Hunt(tuna)
 	//Assert
 	assert.EqualError(t, err, expected.Error())
-	assert.Equal(t, true, cs.GLDSpy)
+	assert.Equal(t, true, cs.GetLinearDistanceSpy)
 }
 
 func TestSharkCannotCatchDistance(t *testing.T) {
@@ -110,5 +110,5 @@ func TestSharkCannotCatchDistance(t *testing.T) {
 	err := shark.Hunt(tuna)
 	//Assert
 	assert.EqualError(t, err, expected.Error())
-	assert.Equal(t, true, cs.GLDSpy)
+	assert.Equal(t, true, cs.GetLinearDistanceSpy)
 }
