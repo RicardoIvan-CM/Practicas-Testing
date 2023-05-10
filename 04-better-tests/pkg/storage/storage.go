@@ -16,7 +16,7 @@ type storage struct {
 func (s *storage) GetValue(key string) interface{} {
 	file, err := os.ReadFile(s.file)
 	if err != nil {
-		panic(err)
+		//panic(err)
 		return nil
 	}
 
@@ -34,6 +34,10 @@ func (s *storage) GetValue(key string) interface{} {
 }
 
 func NewStorage() Storage {
-	file := "../config.json"
-	return &storage{file: file}
+	url := "config.json"
+	return &storage{file: url}
+}
+
+func NewStorageFromURL(url string) Storage {
+	return &storage{file: url}
 }

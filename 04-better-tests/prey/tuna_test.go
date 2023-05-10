@@ -25,7 +25,7 @@ func CreateTuna(storage storage.Storage) Prey {
 
 func TestCreateTuna(t *testing.T) {
 	//Arrange
-	var storage = storage.NewStorage()
+	var storage = storage.NewStorageFromURL("../pkg/storage/config.json")
 	var expected = &tuna{
 		maxSpeed: 100,
 	}
