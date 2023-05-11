@@ -3,6 +3,8 @@ package server
 import (
 	"functional/prey"
 	"functional/shark"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -28,6 +30,19 @@ func (h *Handler) ConfigureShark() gin.HandlerFunc {
 	}
 
 	return func(context *gin.Context) {
+		var sharkRequest request
+		if err := context.ShouldBindJSON(&sharkRequest); err != nil {
+			context.JSON(http.StatusBadRequest, gin.H{
+				"success": false,
+			})
+			return
+		}
+
+		h.shark.Configure([2]float64{sharkRequest.XPosition, sharkRequest.YPosition}, sharkRequest.Speed)
+
+		context.JSON(http.StatusOK, gin.H{
+			"success": true,
+		})
 	}
 }
 
@@ -42,6 +57,19 @@ func (h *Handler) ConfigurePrey() gin.HandlerFunc {
 	}
 
 	return func(context *gin.Context) {
+		var preyRequest request
+		if err := context.ShouldBindJSON(&preyRequest); err != nil {
+			context.JSON(http.StatusBadRequest, gin.H{
+				"success": false,
+			})
+			return
+		}
+
+		h.prey.SetSpeed(preyRequest.Speed)
+
+		context.JSON(http.StatusOK, gin.H{
+			"success": true,
+		})
 	}
 }
 
@@ -55,5 +83,20 @@ func (h *Handler) SimulateHunt() gin.HandlerFunc {
 	}
 
 	return func(context *gin.Context) {
+		err, res := h.shark.Hunt(h.prey)
+		if err != nil {
+			context.JSON(http.StatusOK, gin.H{
+				"success": false,
+				"message": err.Error(),
+				"time":    0,
+			})
+			return
+		}
+		context.JSON(http.StatusOK, gin.H{
+			"success": true,
+			"message": "could catch it",
+			"time":    res,
+		})
+
 	}
 }
